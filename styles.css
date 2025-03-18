@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #0099FF;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 120px;
+    color: white;
+    text-shadow: 3px 3px 0 black, -3px -3px 0 black, 3px -3px 0 black, -3px 3px 0 black;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 20px;
+    z-index: 10;
+}
+
+h3 {
+    font-family: 'Pacifico', cursive;
+    font-size: 30px;
+    color: white;
+    text-shadow: 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black;
+    margin: 0;
+    display: inline-block;
+}
+
+#scoreboard {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    text-align: right;
+    font-family: 'Pacifico', cursive;
+    font-size: 50px;
+    color: white;
+    text-shadow: 2px 2px 0 black, -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black;
+    z-index: 5;
+}
+
+#container {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    background-color: #0099FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 30px;
+    padding: 15px;
+    z-index: 1;
+}
+
+canvas {
+    background-color: #F4A460;
+    border-radius: 35px;
+    border: 5px solid #b17a1d;
+}
+
+#options {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-family: 'Pacifico', cursive;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    z-index: 5;
+}
+
+#options div {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+#options select {
+    font-family: 'Pacifico', cursive;
+    background-color: #F4A460;
+    color: #b17a1d;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    padding: 8px;
+    width: 200px;
+}

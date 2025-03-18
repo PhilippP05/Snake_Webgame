@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Spiel - Strand</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Snake</h1>
+
+<audio id="background-music" loop>
+    <source src="backroundmusic/music.mp3" type="audio/mp3">
+    Dein Browser unterstützt kein Audio-Element.
+</audio>
+
+<div id="scoreboard">
+    <div>Highscore: 0</div>
+    <div>Score: 0</div>
+</div>
+
+<div id="options">
+    <div>
+        <h3 for="fruit">Fruit:</h3>
+        <select id="fruit">
+            <option value="apple">Apple</option>
+            <option value="banana">Banana</option>
+            <option value="orange">Orange</option>
+        </select>
+    </div>
+    <div>
+        <h3 for="speed">Speed:</h3>
+        <select id="speed">
+            <option value="normal">Normal</option>
+            <option value="fast">Fast</option>
+            <option value="very-fast">Very Fast</option>
+        </select>
+    </div>
+    <div>
+        <h3 for="mapsize">Map Size:</h3>
+        <select id="mapsize">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+        </select>
+    </div>
+    <div>
+        <h3 for="fruit-amount">Amount of Fruit:</h3>
+        <select id="fruit-amount">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+    </div>
+</div>
+
+<div id="container">
+    <canvas id="game" width="500" height="500"></canvas>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
