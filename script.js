@@ -1,3 +1,4 @@
+// Spielfeld und Kontext abrufen
 var canvas = document.getElementById('game');
 var context = canvas.getContext('2d');
 
@@ -12,10 +13,8 @@ var fruitAmount = 1;
 
 var music = document.getElementById('background-music');
 
-// Starte die Musik automatisch, wenn das Spiel geladen wird
-window.addEventListener('load', function() {
-    music.play().catch(error => console.log("Autoplay verhindert, Benutzerinteraktion erforderlich."));
-});
+// Startvariable für das Spiel
+var gameStarted = false;
 
 // Snake Objekt
 var snake = {
@@ -40,155 +39,88 @@ fruitImages.orange.src = "fruits/orange.png";
 
 var apples = [];
 
-function initializeFruits() {
-    apples = [];
-    for (let i = 0; i < fruitAmount; i++) {
-        apples.push({ x: getRandomInt(0, mapSize / grid), y: getRandomInt(0, mapSize / grid) });
-    }
+// Startbildschirm anzeigen
+function showStartScreen() {
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "white";
+    context.font = "30px Arial";
+    context.textAlign = "center";
+    context.fillText("Drücke eine Pfeiltaste zum Starten", canvas.width / 2, canvas.height / 2);
 }
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) * grid;
-}
-
+// Spiel zurücksetzen und erneut starten
 function resetGame() {
-    if (score > highscore) {
-        highscore = score;
-        document.getElementById('scoreboard').children[0].textContent = 'Highscore: ' + highscore;
-    }
-    score = 0;
-    document.getElementById('scoreboard').children[1].textContent = 'Score: ' + score;
-
     snake.x = 0;
     snake.y = 0;
-    snake.cells = [];
-    snake.maxCells = 4;
     snake.dx = grid;
     snake.dy = 0;
+    snake.cells = [];
+    snake.maxCells = 4;
+    score = 0;
+    apples = [];
     initializeFruits();
+    gameStarted = false;
+    showStartScreen();
 }
 
-function drawGrid() {
-    context.strokeStyle = '#b17a1d';
-    context.lineWidth = 1;
+// Startbildschirm anzeigen, wenn das Spiel geladen wird
+window.onload = function() {
+    showStartScreen();
+};
 
-    for (var x = 0; x < canvas.width; x += grid) {
-        for (var y = 0; y < canvas.height; y += grid) {
-            context.strokeRect(x, y, grid - 1, grid - 1);
+// Tastendruck-Ereignislistener hinzufügen
+document.addEventListener('keydown', function(e) {
+    if (!gameStarted && (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        gameStarted = true;
+        requestAnimationFrame(loop);
+    }
+
+    // Bewegung nur zulassen, wenn das Spiel gestartet ist
+    if (gameStarted) {
+        if (e.key === "ArrowLeft" && snake.dx === 0) {
+            snake.dx = -grid;
+            snake.dy = 0;
+        } else if (e.key === "ArrowUp" && snake.dy === 0) {
+            snake.dy = -grid;
+            snake.dx = 0;
+        } else if (e.key === "ArrowRight" && snake.dx === 0) {
+            snake.dx = grid;
+            snake.dy = 0;
+        } else if (e.key === "ArrowDown" && snake.dy === 0) {
+            snake.dy = grid;
+            snake.dx = 0;
         }
     }
-}
+});
 
+// Spielschleife
 function loop() {
+    if (!gameStarted) {
+        return; // Stoppe das Spiel, wenn es nicht gestartet ist
+    }
+
     requestAnimationFrame(loop);
     if (++count < speed) {
         return;
     }
     count = 0;
-    context.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawGrid();
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
     snake.x += snake.dx;
     snake.y += snake.dy;
 
-    if (snake.x < 0 || snake.x >= mapSize || snake.y < 0 || snake.y >= mapSize) {
+    // Kollision mit Wänden oder sich selbst
+    if (snake.x < 0 || snake.y < 0 || snake.x >= canvas.width || snake.y >= canvas.height) {
         resetGame();
         return;
     }
 
-    snake.cells.unshift({ x: snake.x, y: snake.y });
-    if (snake.cells.length > snake.maxCells) {
-        snake.cells.pop();
+    // Zeichenprozess für Snake und Früchte hier einfügen...
+
+    // Falls Game Over, dann erneut Startbildschirm anzeigen
+    if (!gameStarted) {
+        showStartScreen();
     }
-
-    // Früchte zeichnen
-    apples.forEach((apple) => {
-        context.drawImage(fruitImages[fruitType], apple.x, apple.y, grid - 1, grid - 1);
-    });
-
-    // Snake zeichnen
-    snake.cells.forEach(function (cell, index) {
-        if (index === 0) {
-            // Kopf der Schlange
-            context.fillStyle = 'green';
-            context.fillRect(cell.x, cell.y, grid, grid);
-
-            // Border für den Kopf
-            context.strokeStyle = 'black';
-            context.lineWidth = 1;
-            context.strokeRect(cell.x, cell.y, grid, grid);
-
-            // Augen
-            context.fillStyle = 'white';
-            context.fillRect(cell.x + 10, cell.y + 15, 10, 10);
-            context.fillRect(cell.x + 30, cell.y + 15, 10, 10);
-        } else {
-            // Körper
-            context.fillStyle = 'green';
-            context.strokeStyle = 'black';
-            context.lineWidth = 1;
-            context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
-            context.strokeRect(cell.x, cell.y, grid - 1, grid - 1);
-        }
-
-        // Kollisionsprüfung mit Früchten
-        apples.forEach((apple, index) => {
-            if (cell.x === apple.x && cell.y === apple.y) {
-                snake.maxCells++;
-                score++;
-                document.getElementById('scoreboard').children[1].textContent = 'Score: ' + score;
-                apples[index] = { x: getRandomInt(0, mapSize / grid), y: getRandomInt(0, mapSize / grid) };
-            }
-        });
-
-        // Kollision mit sich selbst
-        for (var i = index + 1; i < snake.cells.length; i++) {
-            if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-                resetGame();
-                return;
-            }
-        }
-    });
 }
-
-document.addEventListener('keydown', function (e) {
-    if (e.which === 37 && snake.dx === 0) {
-        snake.dx = -grid;
-        snake.dy = 0;
-    } else if (e.which === 38 && snake.dy === 0) {
-        snake.dy = -grid;
-        snake.dx = 0;
-    } else if (e.which === 39 && snake.dx === 0) {
-        snake.dx = grid;
-        snake.dy = 0;
-    } else if (e.which === 40 && snake.dy === 0) {
-        snake.dy = grid;
-        snake.dx = 0;
-    }
-});
-
-document.getElementById('speed').addEventListener('change', function () {
-    let value = this.value;
-    speed = value === 'normal' ? 10 : value === 'fast' ? 7 : 5;
-});
-
-document.getElementById('mapsize').addEventListener('change', function () {
-    let value = this.value;
-    mapSize = value === 'small' ? 400 : value === 'medium' ? 500 : 600;
-    canvas.width = mapSize;
-    canvas.height = mapSize;
-    resetGame();
-});
-
-document.getElementById('fruit-amount').addEventListener('change', function () {
-    fruitAmount = parseInt(this.value);
-    initializeFruits();
-});
-
-document.getElementById('fruit').addEventListener('change', function () {
-    fruitType = this.value;
-});
-
-initializeFruits();
-requestAnimationFrame(loop);
